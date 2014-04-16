@@ -100,6 +100,8 @@ package TF2DamagePackage
 {
   function Armor::damage(%this, %obj, %source, %position, %damage, %type, %crit)
   {
+    %obj.lastTF2DamageTime = $Sim::Time;
+
     if (!$TF2Damage::IsValid[%type])
       return Parent::damage(%this, %obj, %source, %position, %damage, %type);
 
