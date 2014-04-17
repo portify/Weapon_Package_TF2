@@ -12,27 +12,6 @@ datablock AudioProfile(TF2RocketLauncherShootCritSound)
   preload = 1;
 };
 
-datablock AudioProfile(TF2RocketLauncherExplode1Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/weapons/explode1.wav";
-  description = AudioClose3d;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2RocketLauncherExplode2Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/weapons/explode2.wav";
-  description = AudioClose3d;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2RocketLauncherExplode3Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/weapons/explode3.wav";
-  description = AudioClose3d;
-  preload = 1;
-};
-
 datablock ParticleData(TF2RocketLauncherSmokeParticle)
 {
   dragCoefficient   = 0.4;
@@ -122,23 +101,14 @@ datablock ParticleEmitterData(TF2RocketTrailEmitter)
 
 datablock ParticleData(TF2RocketTrailCritREDParticle : TF2RocketTrailParticle)
 {
-  textureName       = "base/data/particles/star1";
-  lifetimeVarianceMS  = 200;
-
-  colors[0]  = "1 0.2 0 0.8";
-  colors[1]  = "1 0.1 0 0.8";
-  colors[2]  = "1 0 0 0.8";
+  colors[0]  = "1 1 0 0.4";
+  colors[1]  = "1 0 0 0.5";
+  colors[2]  = "1 0 0.2 0.3";
   colors[3]  = "0 0 0 0";
-
-  sizes[0]   = 0.25;
-  sizes[1]   = 0.65;
-  sizes[2]   = 0.65;
-  sizes[3]   = 0.05;
 };
 
 datablock ParticleEmitterData(TF2RocketTrailCritREDEmitter : TF2RocketTrailEmitter)
 {
-  ejectionVelocity = 1;
   particles = TF2RocketTrailCritREDParticle;
 };
 
@@ -213,7 +183,7 @@ datablock ParticleData(TF2RocketExplosionPointParticle)
   gravityCoefficient  = 0.5;
   inheritedVelFactor  = 0.2;
   constantAcceleration = 0.0;
-  lifetimeMS        = 10000;
+  lifetimeMS        = 1000;
   lifetimeVarianceMS  = 50;
   textureName       = "base/data/particles/dot";
   spinSpeed  = 10.0;
@@ -406,7 +376,7 @@ datablock ItemData(TF2RocketLauncherItem)
 {
   className = "Weapon";
 
-  shapeFile = "Add-Ons/Weapon_Rocket_Launcher/rocketLauncher.dts";
+  shapeFile = "Add-Ons/Weapon_Package_TF2/shapes/RocketLauncher.dts";
   emap = 1;
   mass = 1;
   density = 0.2;
@@ -427,7 +397,7 @@ datablock ShapeBaseImageData(TF2RocketLauncherREDImage)
   className = "WeaponImage";
   useTF2Projectile = 1;
 
-  shapeFile = "Add-Ons/Weapon_Rocket_Launcher/rocketLauncher.dts";
+  shapeFile = "Add-Ons/Weapon_Package_TF2/shapes/RocketLauncher.dts";
   emap = 1;
 
   mountPoint = 0;
@@ -504,6 +474,8 @@ function TF2RocketLauncherREDImage::onFire(%this, %obj, %slot)
     %sound = TF2RocketLauncherShootSound;
 
   serverPlay3D(%sound, %obj.getMuzzlePoint(%slot));
+  %obj.playThread(0, "shiftUp");
+
   return %p;
 }
 
@@ -514,7 +486,7 @@ function TF2RocketLauncherBLUImage::onFire(%this, %obj, %slot)
 
 function TF2RocketLauncherProjectile::onExplode(%this, %obj, %a, %b, %c, %d)
 {
-  %sound = nameToID("TF2RocketLauncherExplode" @ getRandom(1, 3) @ "Sound");
+  %sound = nameToID("TF2Explode" @ getRandom(1, 3) @ "Sound");
 
   if (isObject(%sound))
   serverPlay3D(%sound, %obj.getPosition());

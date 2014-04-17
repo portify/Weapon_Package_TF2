@@ -11,12 +11,14 @@ $SPEED_SPY      = 300 * $HU_TO_TU;
 datablock PlayerData(PlayerTF2Scout : PlayerStandardArmor)
 {
   uiName = "TF2 - Scout";
+  //jumpForce = -2 * 45 * -800 * $HU_TO_TU * 90;
+  jumpForce = 720;
 
   canJet = 0;
   firstPersonOnly = 1;
 
   maxDamage = 125;
-  maxTools = 3;
+  jumpForce = 720;  maxTools = 3;
 
   maxForwardSpeed = $SPEED_SCOUT;
   maxBackwardSpeed = $SPEED_SCOUT * 0.9;
@@ -31,7 +33,7 @@ datablock PlayerData(PlayerTF2Soldier : PlayerTF2Scout)
 {
   uiName = "TF2 - Soldier";
   maxDamage = 200;
-
+  jumpForce = 720;
   maxForwardSpeed = $SPEED_SOLDIER;
   maxBackwardSpeed = $SPEED_SOLDIER * 0.9;
   maxSideSpeed = $SPEED_SOLDIER;
@@ -45,7 +47,7 @@ datablock PlayerData(PlayerTF2Pyro : PlayerTF2Scout)
 {
   uiName = "TF2 - Pyro";
   maxDamage = 175;
-
+  jumpForce = 720;
   maxForwardSpeed = $SPEED_PYRO;
   maxBackwardSpeed = $SPEED_PYRO * 0.9;
   maxSideSpeed = $SPEED_PYRO;
@@ -59,7 +61,7 @@ datablock PlayerData(PlayerTF2Demoman : PlayerTF2Scout)
 {
   uiName = "TF2 - Demoman";
   maxDamage = 175;
-
+  jumpForce = 720;
   maxForwardSpeed = $SPEED_DEMOMAN;
   maxBackwardSpeed = $SPEED_DEMOMAN * 0.9;
   maxSideSpeed = $SPEED_DEMOMAN;
@@ -73,7 +75,7 @@ datablock PlayerData(PlayerTF2Heavy : PlayerTF2Scout)
 {
   uiName = "TF2 - Heavy";
   maxDamage = 300;
-
+  jumpForce = 720;
   maxForwardSpeed = $SPEED_HEAVY;
   maxBackwardSpeed = $SPEED_HEAVY * 0.9;
   maxSideSpeed = $SPEED_HEAVY;
@@ -88,7 +90,7 @@ datablock PlayerData(PlayerTF2Engineer : PlayerTF2Scout)
   uiName = "TF2 - Engineer";
 
   maxDamage = 125;
-  maxTools = 5;
+  jumpForce = 720;  maxTools = 5;
 
   maxForwardSpeed = $SPEED_ENGINEER;
   maxBackwardSpeed = $SPEED_ENGINEER * 0.9;
@@ -103,7 +105,7 @@ datablock PlayerData(PlayerTF2Medic : PlayerTF2Scout)
 {
   uiName = "TF2 - Medic";
   maxDamage = 150;
-
+  jumpForce = 720;
   maxForwardSpeed = $SPEED_MEDIC;
   maxBackwardSpeed = $SPEED_MEDIC * 0.9;
   maxSideSpeed = $SPEED_MEDIC;
@@ -117,7 +119,7 @@ datablock PlayerData(PlayerTF2Sniper : PlayerTF2Scout)
 {
   uiName = "TF2 - Sniper";
   maxDamage = 125;
-
+  jumpForce = 720;
   maxForwardSpeed = $SPEED_SNIPER;
   maxBackwardSpeed = $SPEED_SNIPER * 0.9;
   maxSideSpeed = $SPEED_SNIPER;
@@ -132,7 +134,7 @@ datablock PlayerData(PlayerTF2Spy : PlayerTF2Scout)
   uiName = "TF2 - Spy";
 
   maxDamage = 125;
-  maxTools = 4;
+  jumpForce = 720;  maxTools = 4;
 
   maxForwardSpeed = $SPEED_SPY;
   maxBackwardSpeed = $SPEED_SPY * 0.9;

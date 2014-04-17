@@ -105,7 +105,7 @@ package TF2DamagePackage
     if (!$TF2Damage::IsValid[%type])
       return Parent::damage(%this, %obj, %source, %position, %damage, %type);
 
-    if (%obj.getState() $= "Dead")
+    if (%obj.getState() $= "Dead" || %damage <= 0)
       return;
 
     %crit = %obj.critHit;
@@ -290,7 +290,11 @@ function Player::rollCritical(%this, %melee)
 function ShapeBase::calculateDamage(%this, %source, %damage, %melee, %crit)
 {
   //%distance = vectorDist(%this.position, %source.position) * 20;
-  %distance = vectorDist(%this.position, %source.position) * $TU_TO_HU;
+  if (%this == %source)
+    %distance = 512;
+  else
+    %distance = vectorDist(%this.position, %source.position) * $TU_TO_HU;
+
   %recentDamage = %source.recentDamage;
 
   //%minFalloff = 0;
@@ -318,8 +322,6 @@ function ShapeBase::calculateDamage(%this, %source, %damage, %melee, %crit)
     %sinusoidal = (%falloff - %damage) / (%maxFalloff - %minFalloff);
     %intercept = %damage - %sinusoidal * %minFalloff;
     %damage = %sinusoidal * %distance + %intercept;
-
-    talk(%base SPC "damage at distance" SPC %distance SPC "->" SPC %damage);
 
     //%multiplier = %minFalloff / %maxFalloff;
     //%falloff = %multiplier * %damage;
