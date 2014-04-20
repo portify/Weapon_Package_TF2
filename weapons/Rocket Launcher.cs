@@ -60,7 +60,8 @@ datablock ParticleData(TF2RocketTrailParticle)
   gravityCoefficient  = -0.0;
   inheritedVelFactor  = 0.15;
   constantAcceleration = 0.0;
-  lifetimeMS        = 1000;
+  //lifetimeMS        = 1000;
+  lifetimeMS = 2000;
   lifetimeVarianceMS  = 805;
   textureName       = "base/data/particles/cloud";
   spinSpeed  = 10.0;
@@ -133,7 +134,8 @@ datablock ParticleData(TF2RocketExplosionParticle)
   inheritedVelFactor  = 0.0;
   constantAcceleration  = 0.0;
   //lifetimeMS  = 800;
-  lifetimeMS = 1100;
+  //lifetimeMS = 1100;
+  lifetimeMS = 800;
   lifetimeVarianceMS  = 00;
   spinSpeed  = 25.0;
   spinRandomMin  = -25.0;
@@ -148,10 +150,14 @@ datablock ParticleData(TF2RocketExplosionParticle)
   colors[2]   = "0.1 0.05 0.025 0.1";
   colors[3]   = "0.1 0.05 0.025 0.0";
 
-  sizes[0]  = 4.0;
-  sizes[1]  = 6.3;
-  sizes[2] = 6.5;
-  sizes[3] = 4.5;
+  //sizes[0]  = 4.0;
+  //sizes[1]  = 6.3;
+  //sizes[2] = 6.5;
+  //sizes[3] = 4.5;
+  sizes[0] = 2.25;
+  sizes[1] = 4.3;
+  sizes[2] = 4.5;
+  sizes[3] = 2.75;
 
   times[0]  = 0.0;
   times[1]  = 0.1;
@@ -183,8 +189,8 @@ datablock ParticleData(TF2RocketExplosionPointParticle)
   gravityCoefficient  = 0.5;
   inheritedVelFactor  = 0.2;
   constantAcceleration = 0.0;
-  lifetimeMS        = 1000;
-  lifetimeVarianceMS  = 50;
+  //lifetimeMS        = 1000;
+  lifetimeMS = 350;
   textureName       = "base/data/particles/dot";
   spinSpeed  = 10.0;
   spinRandomMin  = -500.0;
@@ -203,10 +209,12 @@ datablock ParticleEmitterData(TF2RocketExplosionPointEmitter)
 {
   lifeTimeMS = 100;
 
-  ejectionPeriodMS = 1;
+  //ejectionPeriodMS = 1;
+  ejectionPeriodMS = 5;
   periodVarianceMS = 0;
   //ejectionVelocity = 60;
-  ejectionVelocity = 20;
+  //ejectionVelocity = 20;
+  ejectionVelocity = 30;
   velocityVariance = 0.0;
   ejectionOffset  = 0;
   thetaMin      = 0;
@@ -221,10 +229,10 @@ datablock ParticleData(TF2RocketExplosionChunkParticle)
 {
   //dragCoefficient   = 6;
   dragCoefficient = 2;
-  gravityCoefficient  = 2;
+  gravityCoefficient  = 1;
   inheritedVelFactor  = 0.05;
   constantAcceleration = 0.0;
-  lifetimeMS        = 3000;
+  lifetimeMS        = 2000;
   lifetimeVarianceMS  = 500;
   textureName       = "base/data/particles/chunk";
   spinSpeed  = 10.0;
@@ -234,8 +242,8 @@ datablock ParticleData(TF2RocketExplosionChunkParticle)
   colors[1]  = "0.545 0.27 0.07 0";
   //sizes[0]   = 8;
   //sizes[1]   = 13;
-  sizes[0] = 0.5;
-  sizes[1] = 0.5;
+  sizes[0] = 0.4;
+  sizes[1] = 0.4;
 
   useInvAlpha = false;
 };
@@ -244,13 +252,13 @@ datablock ParticleEmitterData(TF2RocketExplosionChunkEmitter)
 {
   lifeTimeMS = 100;
 
-  ejectionPeriodMS = 8;
+  ejectionPeriodMS = 20;
   periodVarianceMS = 0;
-  ejectionVelocity = 15;
+  ejectionVelocity = 20;
   velocityVariance = 0.0;
   ejectionOffset  = 0;
   thetaMin      = 0;
-  thetaMax      = 180;
+  thetaMax      = 45;
   phiReferenceVel  = 0;
   phiVariance   = 360;
   overrideAdvance = false;
@@ -264,7 +272,8 @@ datablock ParticleData(TF2RocketExplosionSmokeParticle)
   gravityCoefficient  = -0.25;
   inheritedVelFactor  = 0.05;
   constantAcceleration = 0.0;
-  lifetimeMS        = 2500;
+  //lifetimeMS        = 2500;
+  lifetimeMS = 1250;
   lifetimeVarianceMS  = 250;
   textureName       = "base/data/particles/cloud";
 
@@ -276,9 +285,12 @@ datablock ParticleData(TF2RocketExplosionSmokeParticle)
   colors[1] = "0.7 0.7 0.7 0.06";
   colors[2] = "0.5 0.5 0.5 0";
 
-  sizes[0] = 7;
-  sizes[1] = 8;
-  sizes[2] = 9;
+  //sizes[0] = 7;
+  //sizes[1] = 8;
+  //sizes[2] = 9;
+  sizes[0] = 4;
+  sizes[1] = 6;
+  sizes[2] = 8;
 
   times[0] = 0;
   times[1] = 0.25;
@@ -341,6 +353,7 @@ $TF2Damage::IsValid[$DamageType::TF2RocketLauncher] = 1;
 
 datablock ProjectileData(TF2RocketLauncherProjectile)
 {
+  isTF2Projectile = 1;
   projectileShapeName = "Add-Ons/Weapon_Rocket_Launcher/RocketProjectile.dts";
   directDamage     = 90;
   directDamageType = $DamageType::TF2RocketLauncher;
@@ -385,7 +398,7 @@ datablock ItemData(TF2RocketLauncherItem)
 
   uiName = "Rocket Launcher";
 
-  doColorShift = 1;
+  doColorShift = 0;
   colorShiftColor = 184 / 255 SPC 56 / 255 SPC 59 / 255 SPC 1;
 
   image = TF2RocketLauncherREDImage;
@@ -413,13 +426,14 @@ datablock ShapeBaseImageData(TF2RocketLauncherREDImage)
   armReady = 1;
   minShotTime = 800;
 
-  doColorShift = TF2RocketLauncherItem.doColorShift;
+  //doColorShift = TF2RocketLauncherItem.doColorShift;
+  doColorShift = 0;
   colorShiftColor = TF2RocketLauncherItem.colorShiftColor;
 
   stateName[0]                  = "Activate";
   stateTimeoutValue[0]          = 0.25;
   stateTransitionOnTimeout[0]    = "Ready";
-  stateSound[0]      = weaponSwitchSound;
+  stateSound[0] = TF2DrawPrimarySound;
 
   stateName[1]                  = "Ready";
   stateTransitionOnTriggerDown[1]  = "Fire";
@@ -461,6 +475,7 @@ datablock ShapeBaseImageData(TF2RocketLauncherREDImage)
 datablock ShapeBaseImageData(TF2RocketLauncherBLUImage : TF2RocketLauncherREDImage)
 {
   projectileCrit = TF2RocketLauncherCritBLUProjectile;
+  doColorShift = 0;
   colorShiftColor = "0.345 0.521 0.635 1";
 };
 
@@ -474,7 +489,8 @@ function TF2RocketLauncherREDImage::onFire(%this, %obj, %slot)
     %sound = TF2RocketLauncherShootSound;
 
   serverPlay3D(%sound, %obj.getMuzzlePoint(%slot));
-  %obj.playThread(0, "shiftUp");
+  //%obj.playThread(0, "shiftUp");
+  %obj.schedule(64, playThread, 0, "shiftUp");
 
   return %p;
 }

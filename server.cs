@@ -35,7 +35,42 @@ datablock AudioProfile(TF2Explode3Sound)
   preload = 1;
 };
 
+datablock AudioProfile(TF2DrawDefaultSound)
+{
+  fileName = "Add-Ons/Weapon_Package_TF2/sounds/weapons/draw_default.wav";
+  description = AudioClose3d;
+  preload = 1;
+};
+
+datablock AudioProfile(TF2DrawPrimarySound)
+{
+  fileName = "Add-Ons/Weapon_Package_TF2/sounds/weapons/draw_primary.wav";
+  description = AudioClose3d;
+  preload = 1;
+};
+
+datablock AudioProfile(TF2DrawSecondarySound)
+{
+  fileName = "Add-Ons/Weapon_Package_TF2/sounds/weapons/draw_secondary.wav";
+  description = AudioClose3d;
+  preload = 1;
+};
+
+datablock AudioProfile(TF2DrawMeleeSound)
+{
+  fileName = "Add-Ons/Weapon_Package_TF2/sounds/weapons/draw_melee.wav";
+  description = AudioClose3d;
+  preload = 1;
+};
+
+exec("./critical.cs");
+exec("./firing.cs");
 exec("./damage.cs");
 exec("./players.cs");
+
 exec("./weapons/Rocket Launcher.cs");
 exec("./weapons/Grenade Launcher.cs");
+exec("./weapons/Shotgun.cs");
+exec("./weapons/Scattergun.cs");
+exec("./weapons/Pistol.cs");
+exec("./weapons/Revolver.cs");

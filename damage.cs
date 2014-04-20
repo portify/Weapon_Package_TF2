@@ -5,102 +5,12 @@ datablock AudioProfile(TF2HitSound)
   preload = 1;
 };
 
-datablock AudioProfile(TF2CritHit1Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_hit.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritHit2Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_hit2.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritHit3Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_hit3.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritHit4Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_hit4.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritHit5Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_hit5.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritHitMini1Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_hit_mini.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritHitMini2Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_hit_mini2.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritHitMini3Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_hit_mini3.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritHitMini4Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_hit_mini4.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritHitMini5Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_hit_mini5.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritReceived1Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_received1.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritReceived2Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_received2.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
-datablock AudioProfile(TF2CritReceived3Sound)
-{
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/player/crit_received3.wav";
-  description = AudioLoud2D;
-  preload = 1;
-};
-
 package TF2DamagePackage
 {
-  function Armor::damage(%this, %obj, %source, %position, %damage, %type, %crit)
+  function Armor::damage(%this, %obj, %source, %position, %damage, %type)
   {
-    %obj.lastTF2DamageTime = $Sim::Time;
+    %crit = %obj.critHit;
+    %obj.critHit = "";
 
     if (!$TF2Damage::IsValid[%type])
       return Parent::damage(%this, %obj, %source, %position, %damage, %type);
@@ -108,9 +18,7 @@ package TF2DamagePackage
     if (%obj.getState() $= "Dead" || %damage <= 0)
       return;
 
-    %crit = %obj.critHit;
-    %obj.critHit = "";
-
+    %obj.lastTF2DamageTime = $Sim::Time;
     %player = 0;
 
     if (isObject(%source))
@@ -128,13 +36,24 @@ package TF2DamagePackage
     if (!isObject(%player))
       %player = %obj;
 
-    %damage = %obj.calculateDamage(%player, %damage, $TF2Damage::IsMelee[%type], %crit);
+    %damage = %obj.calculateDamage(%player, %damage, %crit, $TF2Damage::NoRamp[%type]);
 
     if (%damage <= 0)
       return;
 
     if (isObject(%player) && %player != %obj)
       %player.addRecentDamage(%damage);
+
+    if ($Sim::Time - %obj.lastCritEmote >= 0.1)
+    {
+      %db[2] = TF2CriticalHitProjectile;
+
+      if (isObject(%db[%crit]))
+      {
+        %obj.emote(%db[%crit], 1);
+        %obj.lastCritEmote = $Sim::Time;
+      }
+    }
 
     if (isObject(%obj.client) && %crit == 2)
     {
@@ -163,7 +82,6 @@ package TF2DamagePackage
   function ProjectileData::damage(%this, %obj, %col, %fade, %pos, %normal)
   {
     //if (!%this.isTF2Projectile)
-    if (0)
       return Parent::damage(%this, %obj, %col, %fade, %pos, %normal);
 
     %obj.directHit[%col] = 1;
@@ -182,8 +100,7 @@ package TF2DamagePackage
 
   function ProjectileData::radiusDamage(%this, %obj, %col, %factor, %pos, %damage)
   {
-    //if (!%this.isTF2Projectile)
-    if (0)
+    if (!%this.isTF2Projectile)
       return Parent::radiusDamage(%this, %obj, %col, %factor, %pos, %damage);
 
     if (%obj.directHit[%col])
@@ -191,8 +108,8 @@ package TF2DamagePackage
 
     %factor *= calcExplosionCoverage(%pos, %obj, $TypeMasks::FxBrickObjectType);
 
-    if (%col == %obj.sourceObject)
-      %factor /= 2;
+    //if (%col == %obj.sourceObject)
+    //  %factor /= 2;
 
     %factor = mClampF(%factor, 0, 1);
     %damage *= %factor;
@@ -207,8 +124,7 @@ package TF2DamagePackage
 
   function ProjectileData::radiusImpulse(%this, %obj, %col, %factor, %pos, %force)
   {
-    //if (%this.isTF2Projectile)
-    if (1)
+    if (%this.isTF2Projectile)
     {
       if (%obj.directHit[%col])
         return;
@@ -218,80 +134,15 @@ package TF2DamagePackage
 
     Parent::radiusImpulse(%this, %obj, %col, %factor, %pos, %force);
   }
-
-  function WeaponImage::onFire(%this, %obj, %slot)
-  {
-    if (!%this.useTF2Projectile)
-      return Parent::onFire(%this, %obj, %slot);
-
-    %obj.hasShotOnce = 1;
-
-    if (%this.minShotTime > 1)
-    {
-      if (getSimTime() - %obj.lastFireTime < %this.minShotTime)
-        return;
-
-      %obj.lastFireTime = getSimTime();
-    }
-
-    %crit = %obj.rollCritical();
-    %projectile = %this.projectile;
-
-    if (isObject(%this.projectileCrit) && %crit == 2)
-      %projectile = %this.projectileCrit;
-
-    if (!isObject(%projectile))
-      return;
-
-    %muzzlePoint = %obj.getMuzzlePoint(%slot);
-    %muzzleVector = %obj.getMuzzleVector(%slot);
-
-    %inherit = %projectile.inheritFactor;
-    %dot = vectorDot(%obj.getEyeVector(), %muzzleVector);
-
-    if (%dot < 0.6 && vectorLen(%obj.getVelocity()) < 14)
-      %inherit = 0;
-
-    %velocity = vectorScale(%muzzleVector, %projectile.muzzleVelocity);
-    %velocity = vectorAdd(%velocity, vectorScale(%obj.getVelocity(), %inherit));
-
-    %p = new Projectile()
-    {
-      dataBlock = %projectile;
-
-      initialPosition = %muzzlePoint;
-      initialVelocity = %velocity;
-
-      sourceObject = %obj;
-      sourceSlot = %slot;
-
-      client = %obj.client;
-      crit = %crit;
-    };
-
-    MissionCleanup.add(%p);
-    return %p;
-  }
 };
 
 activatePackage("TF2DamagePackage");
 
-function Player::rollCritical(%this, %melee)
-{
-  %chance = %melee ? 0.15 : 0.02;
-  %chance += mClampF(%this.recentDamage / 800, 0, 1) * (%melee ? 0.45 : 0.1);
-
-  %crit = getRandom() < %chance ? 2 : 0;
-  %crit = mClamp(getMax(%crit, %this.critBoost), 0, 2);
-
-  return %crit;
-}
-
-function ShapeBase::calculateDamage(%this, %source, %damage, %melee, %crit)
+function ShapeBase::calculateDamage(%this, %source, %damage, %crit, %noRamp)
 {
   //%distance = vectorDist(%this.position, %source.position) * 20;
   if (%this == %source)
-    %distance = 512;
+    %distance = 768;
   else
     %distance = vectorDist(%this.position, %source.position) * $TU_TO_HU;
 
@@ -303,7 +154,7 @@ function ShapeBase::calculateDamage(%this, %source, %damage, %melee, %crit)
 
   %crit = mClamp(%crit, 0, 2);
 
-  if (%crit != 2)
+  if (%crit != 2 && !%noRamp)
   {
     // %midFalloff = (%maxFalloff + %minFalloff) / 2;
 

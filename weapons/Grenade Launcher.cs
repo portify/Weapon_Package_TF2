@@ -14,7 +14,7 @@ datablock AudioProfile(TF2GrenadeLauncherShootCritSound)
 
 datablock AudioProfile(TF2GrenadeLauncherImpact1Sound)
 {
-  fileName = "Add-Ons/Weapon_Package_TF2/sounds/weapons/grenade_impact1.wav";
+  fileName = "Add-Ons/Weapon_Package_TF2/sounds/weapons/grenade_impact.wav";
   description = AudioClose3d;
   preload = 1;
 };
@@ -110,9 +110,12 @@ datablock ExplosionData(TF2GrenadeLauncherExplosion)
 
 addDamageType("TF2GrenadeLauncher", '<bitmap:Add-Ons/Weapon_Package_TF2/images/CI_Grenade_Launcher> %1', '%2 <bitmap:Add-Ons/Weapon_Package_TF2/images/CI_Grenade_Launcher> %1', 1, 1);
 $TF2Damage::IsValid[$DamageType::TF2GrenadeLauncher] = 1;
+$TF2Damage::NoRamp[$DamageType::TF2GrenadeLauncher] = 1;
 
 datablock ProjectileData(TF2GrenadeLauncherProjectile)
 {
+  isTF2Projectile = 1;
+
   projectileShapeName = "Add-Ons/Weapon_Rocket_Launcher/RocketProjectile.dts";
   directDamage     = 90;
   directDamageType = $DamageType::TF2GrenadeLauncher;
@@ -124,11 +127,13 @@ datablock ProjectileData(TF2GrenadeLauncherProjectile)
 
   muzzleVelocity = 1217.5 * $HU_TO_TU;
   velInheritFactor = 0.1;
-  explodeOnDeath = 1;
 
-  armingDelay = 3500;
-  lifeTime = 3500;
-  fadeDelay = 3500;
+  explodeOnDeath = 1;
+  explodeOnPlayerImpact = 0;
+
+  armingDelay = 2900;
+  lifeTime = 3000;
+  fadeDelay = 3000;
 
   isBallistic = 1;
   gravityMod = 1;
@@ -165,7 +170,7 @@ datablock ItemData(TF2GrenadeLauncherItem)
 
   uiName = "Grenade Launcher";
 
-  doColorShift = 1;
+  doColorShift = 0;
   colorShiftColor = 184 / 255 SPC 56 / 255 SPC 59 / 255 SPC 1;
 
   image = TF2GrenadeLauncherREDImage;
@@ -193,13 +198,14 @@ datablock ShapeBaseImageData(TF2GrenadeLauncherREDImage)
   armReady = 1;
   minShotTime = 600;
 
-  doColorShift = TF2GrenadeLauncherItem.doColorShift;
+  //doColorShift = TF2GrenadeLauncherItem.doColorShift;
+  doColorShift = 0;
   colorShiftColor = TF2GrenadeLauncherItem.colorShiftColor;
 
   stateName[0]                  = "Activate";
   stateTimeoutValue[0]          = 0.25;
   stateTransitionOnTimeout[0]    = "Ready";
-  stateSound[0]      = weaponSwitchSound;
+  stateSound[0] = TF2DrawPrimarySound;
 
   stateName[1]                  = "Ready";
   stateTransitionOnTriggerDown[1]  = "Fire";
@@ -241,6 +247,7 @@ datablock ShapeBaseImageData(TF2GrenadeLauncherREDImage)
 datablock ShapeBaseImageData(TF2GrenadeLauncherBLUImage : TF2GrenadeLauncherREDImage)
 {
   projectileCrit = TF2GrenadeLauncherCritBLUProjectile;
+  doColorShift = 0;
   colorShiftColor = "0.345 0.521 0.635 1";
 };
 
@@ -280,7 +287,7 @@ function TF2GrenadeLauncherProjectile::onCollision(%this, %obj, %col, %fade, %po
 {
   if (%col.getType() & $TypeMasks::PlayerObjectType && !%obj.bounced)
   {
-    if (miniGameCanDamage(%obj, %col))
+    if (miniGameCanDamage(%obj, %col) == 1)
       %this.damage(%obj, %col, %fade, %pos, %normal);
 
     %obj.explode();
@@ -294,7 +301,7 @@ function TF2GrenadeLauncherProjectile::onCollision(%this, %obj, %col, %fade, %po
       serverPlay3D(%sound, %pos);
   }
 
-  Parent::onCollision(%this, %obj, %col, %fade, %pos, %normal);
+  //Parent::onCollision(%this, %obj, %col, %fade, %pos, %normal);
 }
 
 function TF2GrenadeLauncherCritREDProjectile::onExplode(%this, %obj, %a, %b, %c, %d)

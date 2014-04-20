@@ -12,7 +12,8 @@ datablock PlayerData(PlayerTF2Scout : PlayerStandardArmor)
 {
   uiName = "TF2 - Scout";
   //jumpForce = -2 * 45 * -800 * $HU_TO_TU * 90;
-  jumpForce = 720;
+  jumpForce = 860;
+  airControl = 0.25;
 
   canJet = 0;
   firstPersonOnly = 1;
@@ -27,6 +28,12 @@ datablock PlayerData(PlayerTF2Scout : PlayerStandardArmor)
   maxForwardCrouchSpeed = $SPEED_SCOUT * 0.33;
   maxBackwardCrouchSpeed = $SPEED_SCOUT * 0.9 * 0.33;
   maxSideCrouchSpeed = $SPEED_SCOUT * 0.33;
+};
+
+datablock PlayerData(PlayerTF2ScoutJumped : PlayerTF2Scout)
+{
+  uiName = "";
+  airControl = 1;
 };
 
 datablock PlayerData(PlayerTF2Soldier : PlayerTF2Scout)
@@ -144,6 +151,73 @@ datablock PlayerData(PlayerTF2Spy : PlayerTF2Scout)
   maxBackwardCrouchSpeed = $SPEED_SPY * 0.9 * 0.33;
   maxSideCrouchSpeed = $SPEED_SPY * 0.33;
 };
+
+function PlayerTF2Scout::onTrigger(%this, %obj, %slot, %value)
+{
+  Parent::onTrigger(%this, %obj, %slot, %value);
+
+  if (!%value || %slot != 2)
+    return;
+
+  %pos = %obj.getPosition();
+  %mask = $TypeMasks::FxBrickAlwaysObjectType | $TypeMasks::PlayerObjectType | $TypeMasks::StaticObjectType | $TypeMasks::TerrainObjectType | $TypeMasks::VehicleObjectType;
+
+  %ray = containerRayCast(%pos, vectorAdd(%pos, "0 0 -0.3"), %mask, %obj);
+
+  if (%ray && (!(%ray.getType() & $TypeMasks::FxBrickAlwaysObjectType) || %ray.isColliding()))
+    return;
+
+  %obj.setVelocity("0 0 0");
+  %obj.applyImpulse("0 0 0", "0 0" SPC %this.jumpForce);
+  %obj.playThread(3, "jump");
+
+  %p = new Projectile()
+  {
+    dataBlock = pushBroomProjectile;
+    initialPosition = %pos;
+    initialVelocity = "0 0 -1";
+    sourceObject = %obj;
+    client = %obj.client;
+    sourceSlot = 0;
+    originPoint = %pos;
+  };
+
+  MissionCleanup.add(%p);
+  %p.explode();
+
+  %obj.setDataBlock(PlayerTF2ScoutJumped);
+  //%obj.checkDoubleJump = %obj.schedule(16, checkDoubleJump);
+}
+
+function PlayerTF2ScoutJumped::onNewDataBlock(%this, %obj)
+{
+  Parent::onNewDataBlock(%this, %obj);
+  %obj.checkDoubleJump = %obj.schedule(75, checkDoubleJump);
+}
+
+function Player::checkDoubleJump(%this)
+{
+  cancel(%this.checkDoubleJump);
+
+  if (%this.getDataBlock() != nameToID("PlayerTF2ScoutJumped"))
+    return;
+
+  if (%this.getState() $= "Dead")
+  {
+    %this.changeDataBlock("PlayerTF2Scout");
+    return;
+  }
+
+  %pos = %this.getPosition();
+  %mask = $TypeMasks::FxBrickAlwaysObjectType | $TypeMasks::PlayerObjectType | $TypeMasks::StaticObjectType | $TypeMasks::TerrainObjectType | $TypeMasks::VehicleObjectType;
+
+  %ray = containerRayCast(%pos, vectorAdd(%pos, "0 0 -0.3"), %mask, %this);
+
+  if (!%ray || !(!(%ray.getType() & $TypeMasks::FxBrickAlwaysObjectType) || %ray.isColliding()))
+    %this.checkDoubleJump = %this.schedule(24, checkDoubleJump);
+  else
+    %this.changeDataBlock(PlayerTF2Scout);
+}
 
 function PlayerTF2Medic::onNewDataBlock(%this, %obj)
 {
